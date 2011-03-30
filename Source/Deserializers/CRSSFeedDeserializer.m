@@ -33,6 +33,7 @@
 #include "RSSKeywords.h"
 
 #import "NSDate_InternetDateExtensions.h"
+#import "NSDate_LiberalDates.h"
 #import "CXMLNode_PrivateExtensions.h"
 #import "CXMLElement.h"
 
@@ -237,7 +238,7 @@ while (theCurrentNode != NULL && self.error == NULL)
 				xmlChar *theContentBytes = xmlNodeGetContent(theCurrentNode);
 				NSString *theContent = [NSString stringWithUTF8String:(const char *)theContentBytes];
 				theContent = [theContent stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-				NSDate *theDate = [NSDate dateWithRFC2822String:theContent];
+				NSDate *theDate = [NSDate dateWithInternetString:theContent];
 				if (theDate)
 					[inItem setObject:theDate forKey:@"updated"];
 				xmlFree(theContentBytes);
@@ -255,12 +256,12 @@ while (theCurrentNode != NULL && self.error == NULL)
 				break;
 			default:
 				{
-				if (strcmp((const char *)theElementName, "updated") == 0 && [inItem objectForKey:@"updated"] == NULL)
+				if (((strcmp((const char *)theElementName, "updated") == 0) || (strcmp((const char *)theElementName, "date") == 0)) && [inItem objectForKey:@"updated"] == NULL)
 					{
 					xmlChar *theContentBytes = xmlNodeGetContent(theCurrentNode);
 					NSString *theContent = [NSString stringWithUTF8String:(const char *)theContentBytes];
 					theContent = [theContent stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-					NSDate *theDate = [NSDate dateWithRFC2822String:theContent];
+					NSDate *theDate = [NSDate dateWithInternetString:theContent];
 					if (theDate)
 						[inItem setObject:theDate forKey:@"updated"];
 					xmlFree(theContentBytes);
